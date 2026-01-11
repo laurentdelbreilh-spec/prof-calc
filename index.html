@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertisseur de Notes</title>
+    <style>
+        :root {
+            --color-primary: #2180A8;
+            --color-primary-hover: #1d7494;
+            --color-primary-active: #1a6885;
+            --color-success: #32B8C6;
+            --color-surface: #FFFFF5;
+            --color-text: #134252;
+            --color-text-secondary: #626C71;
+            --color-border: #EAE3D5;
+            --color-bg: #FcFcF9;
+            --color-error: #C01530;
+            --space-16: 16px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-20: 20px;
+            --radius-base: 8px;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #FcFcF9 0%, #F5F5F0 100%);
+            margin: 0;
+            padding: var(--space-20);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: var(--space-20);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin: 0 0 var(--space-8) 0;
+            color: var(--color-text);
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            margin-bottom: var(--space-16);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 var(--space-16) 0;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-16);
+            margin-bottom: var(--space-16);
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: var(--space-8);
+            color: var(--color-text);
+        }
+
+        input[type="number"],
+        textarea {
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-family: var(--font-family);
+            font-size: 14px;
+            color: var(--color-text);
+            background: var(--color-bg);
+            transition: border-color 150ms, box-shadow 150ms;
+        }
+
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(33, 128, 168, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .input-helper {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: var(--space-8);
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--space-8);
+            margin-top: var(--space-16);
+        }
+
+        button {
+            flex: 1;
+            padding: var(--space-12) var(--space-16);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms;
+            font-family: var(--font-family);
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-primary:active {
+            background: var(--color-primary-active);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(33, 128, 168, 0.05);
+        }
+
+        .results {
+            background: rgba(50, 184, 198, 0.08);
+            border: 1px solid rgba(50, 184, 198, 0.3);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            margin-top: var(--space-16);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-12);
+            background: white;
+            border-radius: 6px;
+            margin-bottom: var(--space-8);
+            border-left: 3px solid var(--color-success);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-input {
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        .result-output {
+            font-weight: 600;
+            color: var(--color-primary);
+            font-size: 18px;
+        }
+
+        .error {
+            background: rgba(192, 21, 47, 0.1);
+            border: 1px solid rgba(192, 21, 47, 0.3);
+            color: var(--color-error);
+            padding: var(--space-12);
+            border-radius: var(--radius-base);
+            margin-top: var(--space-16);
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: rgba(33, 128, 168, 0.05);
+            border-left: 3px solid var(--color-primary);
+            padding: var(--space-12);
+            margin-bottom: var(--space-16);
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--color-text);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Convertisseur de Notes</h1>
+            <p class="subtitle">Convertissez des notes d'un barème à un autre</p>
+            <p style="font-size: 12px; color: var(--color-text-secondary); margin-top: var(--space-8);">💡 <strong>Sur téléphone :</strong> Appuyez sur le menu du navigateur → "Ajouter à l'écran d'accueil"</p>
+        </header>
+
+        <div class="section">
+            <div class="section-title">
+                <span class="step-number">1</span>
+                Barème d'entrée
+            </div>
+            <div class="form-group">
+                <label for="maxInput">Barème max (ex: 100)</label>
+                <input type="number" id="maxInput" value="100" step="0.01">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span class="step-number">2</span>
+                Barème de sortie
+            </div>
+            <div class="form-group">
+                <label for="maxOutput">Barème max (ex: 20)</label>
+                <input type="number" id="maxOutput" value="20" step="0.01">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span class="step-number">3</span>
+                Notes à convertir
+            </div>
+            <div class="info-box">
+                Entrez une note ou plusieurs notes (une par ligne)
+            </div>
+            <div class="form-group">
+                <label for="grades">Notes</label>
+                <textarea id="grades" placeholder="100&#10;75&#10;50"></textarea>
+                <div class="input-helper">Chaque note sur une nouvelle ligne. Décimales acceptées (ex: 85.5)</div>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="convertGrades()" style="width: 100%;">Convertir</button>
+
+        <div id="results" class="hidden">
+            <div class="section results">
+                <div class="section-title">
+                    <span class="step-number">✓</span>
+                    Résultats
+                </div>
+                <div id="resultsList"></div>
+            </div>
+        </div>
+
+        <div id="error" class="error hidden"></div>
+    </div>
+
+    <script>
+        function convertGrades() {
+            const minInput = 0;
+            const maxInput = parseFloat(document.getElementById('maxInput').value);
+            const minOutput = 0;
+            const maxOutput = parseFloat(document.getElementById('maxOutput').value);
+            const gradesText = document.getElementById('grades').value.trim();
+
+            const errorDiv = document.getElementById('error');
+            errorDiv.classList.add('hidden');
+
+            // Validation
+            if (isNaN(maxInput) || isNaN(maxOutput)) {
+                showError('Veuillez remplir les barèmes');
+                return;
+            }
+
+            if (maxInput <= 0 || maxOutput <= 0) {
+                showError('Les barèmes doivent être positifs');
+                return;
+            }
+
+            if (!gradesText) {
+                showError('Veuillez entrer au moins une note à convertir');
+                return;
+            }
+
+            // Parse notes
+            const grades = gradesText.split('\n')
+                .map(g => g.trim())
+                .filter(g => g.length > 0)
+                .map(g => parseFloat(g))
+                .filter(g => !isNaN(g));
+
+            if (grades.length === 0) {
+                showError('Aucune note valide trouvée. Vérifiez le format');
+                return;
+            }
+
+            // Check ranges
+            const outOfRange = grades.filter(g => g < minInput || g > maxInput);
+            if (outOfRange.length > 0) {
+                showError(`Les notes ${outOfRange.join(', ')} sont en dehors du barème d'entrée [${minInput}, ${maxInput}]`);
+                return;
+            }
+
+            // Convert
+            const results = grades.map(grade => {
+                const normalized = (grade - minInput) / (maxInput - minInput);
+                const converted = minOutput + normalized * (maxOutput - minOutput);
+                return {
+                    input: grade,
+                    output: Math.round(converted * 100) / 100
+                };
+            });
+
+            displayResults(results);
+        }
+
+        function displayResults(results) {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `
+                    <span class="result-input">${result.input}</span>
+                    <span style="color: #626C71;">→</span>
+                    <span class="result-output">${result.output}</span>
+                `;
+                resultsList.appendChild(div);
+            });
+
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '⚠️ ' + message;
+            errorDiv.classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+        }
+
+        function resetForm() {
+            document.getElementById('maxInput').value = '100';
+            document.getElementById('maxOutput').value = '20';
+            document.getElementById('grades').value = '';
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+        }
+
+        // Allow Enter to trigger conversion
+        document.getElementById('grades').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                convertGrades();
+            }
+        });
+    </script>
+</body>
+</html>
